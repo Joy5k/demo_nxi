@@ -12,7 +12,10 @@ import {
 
 
   const baseQuery = fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api/v1/jobs",
+    baseUrl: 
+        process.env.NEXT_PUBLIC_BACKEND_URL ,
+
+    // "http://localhost:5000/api/v1/jobs",
     //below the line set the cookies on browser
     credentials: "include",
     prepareHeaders: (headers, { getState }) => {

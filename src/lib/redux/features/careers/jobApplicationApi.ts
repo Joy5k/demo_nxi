@@ -62,43 +62,29 @@ export const jobApplicationApi = baseApi.injectEndpoints({
       }),
       
       applyToJob: build.mutation({
-         query: ({ jobPostId, data }) => {
-            const formData = new FormData();
-            
-            // Add all text fields
-            formData.append('firstName', data.firstName);
-            formData.append('lastName', data.lastName);
-            formData.append('email', data.email);
-            
-            if (data.phoneNumber) {
-               formData.append('phoneNumber', data.phoneNumber);
-            }
-            if (data.linkedInProfile) {
-               formData.append('linkedInProfile', data.linkedInProfile);
-            }
-            if (data.portfolioUrl) {
-               formData.append('portfolioUrl', data.portfolioUrl);
-            }
-            
-            formData.append('experience', data.experience);
-            
-            if (data.coverLetter) {
-               formData.append('coverLetter', data.coverLetter);
-            }
-            
-            // Add resume file
-            if (data.resume) {
-               formData.append('resume', data.resume);
-            }
-            
-            return {
-               url: `/apply/${jobPostId}`,
-               method: 'POST',
-               data: formData,
-            };
-         },
-         invalidatesTags: ["jobs"],
-      }),
+      query: ({ jobPostId, data }) => {
+        const formData = new FormData();
+        console.log("Applying to jobPostId →", jobPostId);
+
+        formData.append("firstName", data.firstName || "");
+        formData.append("lastName", data.lastName || "");
+        formData.append("email", data.email || "");
+        formData.append("experience", data.experience || "");
+
+        if (data.phoneNumber) formData.append("phoneNumber", data.phoneNumber);
+        if (data.linkedInProfile) formData.append("linkedInProfile", data.linkedInProfile);
+        if (data.portfolioUrl) formData.append("portfolioUrl", data.portfolioUrl);
+        if (data.coverLetter) formData.append("coverLetter", data.coverLetter);
+        if (data.resume) formData.append("resume", data.resume);
+
+        return {
+          url: `/apply/${jobPostId}`,
+          method: "POST",
+          body: formData,
+          formData: true,
+        };
+      },
+    }),
       
       createJobPost: build.mutation({
          query: (jobData) => ({

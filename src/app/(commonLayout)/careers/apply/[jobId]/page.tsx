@@ -66,7 +66,7 @@ function ApplyContent() {
     setFormStatus("sending");
 
     try {
-      const payload: IJobApplication = {
+         const payload: IJobApplication = {
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
