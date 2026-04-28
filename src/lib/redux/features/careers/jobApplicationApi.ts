@@ -44,6 +44,7 @@ export interface IJobApplicationResponse {
 }
 
 export const jobApplicationApi = baseApi.injectEndpoints({
+   overrideExisting: true,
    endpoints: (build) => ({
       getAllJobPosts: build.query({
          query: () => ({
@@ -64,7 +65,6 @@ export const jobApplicationApi = baseApi.injectEndpoints({
       applyToJob: build.mutation({
       query: ({ jobPostId, data }) => {
         const formData = new FormData();
-        console.log("Applying to jobPostId →", jobPostId);
 
         formData.append("firstName", data.firstName || "");
         formData.append("lastName", data.lastName || "");

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState, Suspense } from "react";
@@ -50,7 +51,7 @@ function ApplyContent() {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
+ const [formError,setFormError]=useState("")
   const isFormValid =
     formData.firstName.trim() !== "" &&
     formData.lastName.trim() !== "" &&
@@ -59,14 +60,15 @@ function ApplyContent() {
     formData.experience.trim() !== "" &&
     resumeFile !== null;
 
-  const handleSubmit = async (e: React.FormEvent) => {
+   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
 
     setFormStatus("sending");
+    setFormError("");
 
     try {
-         const payload: IJobApplication = {
+        const payload: IJobApplication = {
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
@@ -75,21 +77,29 @@ function ApplyContent() {
         portfolioUrl: formData.portfolio || undefined,
         experience: formData.experience,
         coverLetter: formData.coverLetter || undefined,
-      };
+        };
 
-      if (resumeFile) {
+        if (resumeFile) {
         payload.resume = resumeFile;
-      }
+        }
 
-      await applyToJob({
-        jobPostId: jobId,
-        data: payload,
-      }).unwrap();
+        const res = await applyToJob({
+            jobPostId: jobId,
+            data: payload,
+        }).unwrap();
 
-      setFormStatus("sent");
-    } catch (error) {
-      console.error("Failed to submit application:", error);
-      setFormStatus("error");
+        if (!res?.data.success) {
+        setFormError(res?.data.message || "Failed to submit application");
+        setFormStatus("idle");
+        } else {
+        setFormStatus("sent");
+        }
+
+    } catch (error: any) {
+        console.error("Failed to submit application:", error);
+        const errorMessage = error?.data?.message || "Something went wrong while submitting your application. Please try again.";
+        setFormError(errorMessage);
+        setFormStatus("idle");
     }
   };
 
@@ -314,42 +324,52 @@ function ApplyContent() {
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-[#1A1A40] mb-2">Resume *</label>
-              <label className="flex items-center justify-center gap-3 border-2 border-dashed border-gray-200 rounded-2xl p-6 cursor-pointer hover:border-[#5D5FEF] transition-colors">
-                <Upload className="w-5 h-5 text-[#5D5FEF]" />
-                <div className="text-sm text-gray-600">
-                  <span className="font-medium text-[#1A1A40]">Upload your resume</span>
-                  <p className="mt-1 text-gray-500">
-                    PDF, DOC, or DOCX up to 10MB
-                  </p>
-                </div>
-                <input type="file" className="hidden" onChange={handleFileChange} accept=".pdf,.doc,.docx" />
-              </label>
-              {resumeName && (
-                <div className="mt-3 flex items-center justify-between rounded-xl bg-gray-50 px-4 py-3">
-                  <span className="text-sm text-gray-700 truncate">{resumeName}</span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setResumeFile(null);
-                      setResumeName("");
-                    }}
-                    className="text-gray-500 hover:text-red-500"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-              )}
-              {errors.resume && <p className="text-red-500 text-sm mt-1">{errors.resume}</p>}
-            </div>
+             <div>
+               <label className="block text-sm font-medium text-[#1A1A40] mb-2">Resume *</label>
+               <label className="flex items-center justify-center gap-3 border-2 border-dashed border-gray-200 rounded-2xl p-6 cursor-pointer hover:border-[#5D5FEF] transition-colors bg-white">
+                 <Upload className="w-5 h-5 text-[#5D5FEF]" />
+                 <div className="text-sm text-gray-600">
+                   <span className="font-medium text-[#1A1A40]">Upload your resume</span>
+                   <p className="mt-1 text-gray-500">
+                     PDF, DOC, or DOCX up to 10MB
+                   </p>
+                 </div>
+                 <input type="file" className="hidden" onChange={handleFileChange} accept=".pdf,.doc,.docx" />
+               </label>
+               {resumeName ? (
+                 <div className="mt-3 flex items-center justify-between rounded-xl bg-green-50 border border-green-200 px-4 py-3">
+                   <div className="flex items-center gap-2">
+                     <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                       <Check className="w-3 h-3 text-white" />
+                     </div>
+                     <span className="text-sm font-medium text-green-700 truncate">{resumeName}</span>
+                   </div>
+                   <button
+                     type="button"
+                     onClick={() => {
+                       setResumeFile(null);
+                       setResumeName("");
+                     }}
+                     className="text-green-600 hover:text-red-500 transition-colors"
+                   >
+                     <X className="w-4 h-4" />
+                   </button>
+                 </div>
+               ) : (
+                 <p className="text-red-500 text-sm mt-1">{errors.resume}</p>
+               )}
+             </div>
           </div>
 
-          {formStatus === "error" && (
+          {
+            formError ? <p className="text-red-500 text-sm mt-1">{formError}</p> :  <div>
+              {formStatus === "error" && (
             <div className="mt-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
               Something went wrong while submitting your application. Please try again.
             </div>
           )}
+            </div>
+          }
 
           <button
             type="submit"
