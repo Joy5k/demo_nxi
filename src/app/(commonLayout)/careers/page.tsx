@@ -8,6 +8,7 @@ import {
   useGetAllJobPostsQuery,
 } from "@/src/lib/redux/features/careers/jobApplicationApi";
 import DOMPurify from "isomorphic-dompurify";
+import Loader from "@/src/components/Loader";
 
 const getJobHref = (job: IJobPost) => `/careers/${job.slug || job.id}`;
 
@@ -69,10 +70,11 @@ export default function CareersPage() {
           </div>
         </div>
 
-        <div className="space-y-4">
+         <div className="space-y-4">
           {isLoading ? (
-            <div className="bg-white rounded-2xl border border-gray-200 p-10 text-center text-gray-500">
-              Loading jobs...
+            <div className="bg-white rounded-2xl border border-gray-200 p-10 text-center">
+              <Loader size="40px" className="mx-auto mb-4" />
+              <p className="text-gray-500">Loading jobs...</p>
             </div>
           ) : filteredJobs.length === 0 ? (
             <div className="bg-white rounded-2xl border border-gray-200 p-10 text-center text-gray-500">
@@ -80,63 +82,63 @@ export default function CareersPage() {
             </div>
           ) : (
             filteredJobs.map((job) => {
-              const excerpt = getExcerpt(job.description);
+               const excerpt = getExcerpt(job.description);
 
-              return (
-                <div
-                  key={job.id}
-                  className="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-lg transition-all"
-                >
-                  <div className="p-6">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                      <div className="flex-1">
-                        <span className="inline-flex text-xs font-semibold text-[#5D5FEF] bg-[#5D5FEF]/10 px-2 py-1 rounded-full mb-3">
-                          {job.status}
-                        </span>
-                        <h3 className="text-xl font-bold text-[#1A1A40] mb-3">
-                          {job.title}
-                        </h3>
-                        <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-4">
-                          {job.location && (
-                            <div className="flex items-center gap-1">
-                              <MapPin className="w-4 h-4" />
-                              {job.location}
-                            </div>
-                          )}
-                          {job.jobType && (
-                            <div className="flex items-center gap-1">
-                              <Clock className="w-4 h-4" />
-                              {job.jobType}
-                            </div>
-                          )}
-                          {job.salaryRange && (
-                            <div className="flex items-center gap-1">
-                              <Briefcase className="w-4 h-4" />
-                              {job.salaryRange}
-                            </div>
-                          )}
-                        </div>
-                        <p className="text-gray-600 line-clamp-3">
-                          {excerpt || "Open the job post to read more details."}
-                        </p>
-                      </div>
+               return (
+                 <div
+                   key={job.id}
+                   className="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-lg transition-all"
+                 >
+                   <div className="p-6">
+                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                       <div className="flex-1">
+                         <span className="inline-flex text-xs font-semibold text-[#5D5FEF] bg-[#5D5FEF]/10 px-2 py-1 rounded-full mb-3">
+                           {job.status}
+                         </span>
+                         <h3 className="text-xl font-bold text-[#1A1A40] mb-3">
+                           {job.title}
+                         </h3>
+                         <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-4">
+                           {job.location && (
+                             <div className="flex items-center gap-1">
+                               <MapPin className="w-4 h-4" />
+                               {job.location}
+                             </div>
+                           )}
+                           {job.jobType && (
+                             <div className="flex items-center gap-1">
+                               <Clock className="w-4 h-4" />
+                               {job.jobType}
+                             </div>
+                           )}
+                           {job.salaryRange && (
+                             <div className="flex items-center gap-1">
+                               <Briefcase className="w-4 h-4" />
+                               {job.salaryRange}
+                             </div>
+                           )}
+                         </div>
+                         <p className="text-gray-600 line-clamp-3">
+                           {excerpt || "Open the job post to read more details."}
+                         </p>
+                       </div>
 
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => router.push(getJobHref(job))}
-                          className="flex items-center gap-2 px-4 py-2 bg-[#5D5FEF] text-white rounded-lg font-medium hover:bg-[#4a4ec7] transition-colors"
-                        >
-                          View Details
-                          <ArrowRight className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })
-          )}
-        </div>
+                       <div className="flex items-center gap-2">
+                         <button
+                           onClick={() => router.push(getJobHref(job))}
+                           className="flex items-center gap-2 px-4 py-2 bg-[#5D5FEF] text-white rounded-lg font-medium hover:bg-[#4a4ec7] transition-colors"
+                         >
+                           View Details
+                           <ArrowRight className="w-4 h-4" />
+                         </button>
+                       </div>
+                     </div>
+                   </div>
+                 </div>
+               );
+             })
+           )}
+         </div>
 
   
       </div>

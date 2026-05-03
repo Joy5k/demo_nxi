@@ -1,354 +1,171 @@
-'use client';
+"use client";
 
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect } from "react";
+import { cubicBezier, motion, useMotionValue, useMotionTemplate, animate, Variants } from "framer-motion";
 
-export default function Home() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [isHovering, setIsHovering] = useState(false);
-  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
+const MissionHero = () => {
+  const bgPos1X = useMotionValue(30);
+  const bgPos1Y = useMotionValue(30);
+  const bgPos2X = useMotionValue(70);
+  const bgPos2Y = useMotionValue(60);
+  const bgPos3X = useMotionValue(50);
+  const bgPos3Y = useMotionValue(50);
+  const bgPos4X = useMotionValue(20);
+  const bgPos4Y = useMotionValue(70);
+  const bgPos5X = useMotionValue(80);
+  const bgPos5Y = useMotionValue(20);
+
+  const animatedBackground = useMotionTemplate`radial-gradient(ellipse at ${bgPos1X}% ${bgPos1Y}%, rgb(153,200,255) 0%, transparent 40%), radial-gradient(ellipse at ${bgPos2X}% ${bgPos2Y}%, rgba(148,219,254,0.85) 0%, transparent 40%), radial-gradient(ellipse at ${bgPos3X}% ${bgPos3Y}%, rgba(212,206,246,0.8) 0%, transparent 45%), radial-gradient(ellipse at ${bgPos4X}% ${bgPos4Y}%, rgb(179,232,252) 0%, transparent 40%), radial-gradient(ellipse at ${bgPos5X}% ${bgPos5Y}%, rgb(147,215,254) 0%, transparent 40%), linear-gradient(135deg, #c8e8f8 0%, #d4ecfa 40%, #cce5f7 70%, #c4e0f5 100%)`;
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (containerRef.current) {
-        const rect = containerRef.current.getBoundingClientRect();
-        setCursorPos({
-          x: e.clientX - rect.left,
-          y: e.clientY - rect.top,
-        });
-      }
-    };
+    // ~3-4x faster than original (18-22s → 4.5-7s)
+    animate(bgPos1X, [10, 80, 20, 60, 10], { duration: 5,   ease: "easeInOut", repeat: Infinity });
+    animate(bgPos1Y, [30, 20, 40, 30],      { duration: 5,   ease: "easeInOut", repeat: Infinity });
+    animate(bgPos2X, [70, 55, 75, 70],      { duration: 6,   ease: "easeInOut", repeat: Infinity });
+    animate(bgPos2Y, [60, 75, 50, 60],      { duration: 6,   ease: "easeInOut", repeat: Infinity });
+    animate(bgPos3X, [50, 65, 40, 50],      { duration: 4.5, ease: "easeInOut", repeat: Infinity });
+    animate(bgPos3Y, [50, 35, 60, 50],      { duration: 4.5, ease: "easeInOut", repeat: Infinity });
+    animate(bgPos4X, [20, 35, 15, 20],      { duration: 7,   ease: "easeInOut", repeat: Infinity });
+    animate(bgPos4Y, [70, 55, 80, 70],      { duration: 7,   ease: "easeInOut", repeat: Infinity });
+    animate(bgPos5X, [80, 65, 85, 80],      { duration: 5.5, ease: "easeInOut", repeat: Infinity });
+    animate(bgPos5Y, [20, 35, 15, 20],      { duration: 5.5, ease: "easeInOut", repeat: Infinity });
+  }, [bgPos1X, bgPos1Y, bgPos2X, bgPos2Y, bgPos3X, bgPos3Y, bgPos4X, bgPos4Y, bgPos5X, bgPos5Y]);
 
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
+  const cards = [
+    { icon: "🌍", label: "Global impact", delay: 0 },
+    { icon: "🤝", label: "Great culture", delay: 1.3 },
+    { icon: "🚀", label: "Fast growth", delay: 2.6 },
+  ];
+
+  const containerVariants: Variants = {
+    hidden: {},
+    visible: { transition: { staggerChildren: 0.15 } },
+  };
+
+  const fadeUp: Variants = {
+    hidden: { opacity: 0, y: 24 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.65, ease: cubicBezier(0.4, 0, 0.2, 1) },
+    },
+  };
 
   return (
-    <div
-      ref={containerRef}
-      className="relative w-full min-h-screen overflow-hidden bg-black pt-5"
-      style={{
-        backgroundImage: `
-          linear-gradient(0deg, transparent 24%, rgba(255, 0, 150, 0.05) 25%, rgba(255, 0, 150, 0.05) 26%, transparent 27%, transparent 74%, rgba(255, 0, 150, 0.05) 75%, rgba(255, 0, 150, 0.05) 76%, transparent 77%, transparent),
-          linear-gradient(90deg, transparent 24%, rgba(255, 0, 150, 0.05) 25%, rgba(255, 0, 150, 0.05) 26%, transparent 27%, transparent 74%, rgba(255, 0, 150, 0.05) 75%, rgba(255, 0, 150, 0.05) 76%, transparent 77%, transparent)
-        `,
-        backgroundSize: '50px 50px',
-      }}
+    <motion.section
+      className="relative w-full h-screen overflow-hidden flex items-center justify-center font-sans"
+      style={{ background: animatedBackground }}
     >
-      {/* Animated grid background */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div
-          className="absolute w-full h-full"
-          style={{
-            backgroundImage: `
-              linear-gradient(0deg, transparent 24%, rgba(0, 255, 200, 0.08) 25%, rgba(0, 255, 200, 0.08) 26%, transparent 27%, transparent 74%, rgba(0, 255, 200, 0.08) 75%, rgba(0, 255, 200, 0.08) 76%, transparent 77%, transparent),
-              linear-gradient(90deg, transparent 24%, rgba(0, 255, 200, 0.08) 25%, rgba(0, 255, 200, 0.08) 26%, transparent 27%, transparent 74%, rgba(0, 255, 200, 0.08) 75%, rgba(0, 255, 200, 0.08) 76%, transparent 77%, transparent)
-            `,
-            backgroundSize: '100px 100px',
-            animation: 'gridSlide 20s linear infinite',
-          }}
+      {/* Edge & corner fills — prevent dark bleed */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-0 w-[35%] h-full blur-[90px]"
+          style={{ background: "radial-gradient(ellipse at 0% 50%, rgba(179,222,252,0.95) 0%, rgba(196,229,252,0.5) 55%, transparent 80%)" }} />
+        <div className="absolute top-0 right-0 w-[35%] h-full blur-[90px]"
+          style={{ background: "radial-gradient(ellipse at 100% 50%, rgba(200,230,255,0.95) 0%, rgba(210,232,252,0.5) 55%, transparent 80%)" }} />
+        <div className="absolute -top-10 -left-10 w-[40%] h-[60%] rounded-full blur-[80px]"
+          style={{ background: "radial-gradient(circle, rgba(180,218,252,0.85) 0%, transparent 70%)" }} />
+        <div className="absolute -top-10 -right-10 w-[40%] h-[60%] rounded-full blur-[80px]"
+          style={{ background: "radial-gradient(circle, rgba(195,225,252,0.85) 0%, transparent 70%)" }} />
+        <div className="absolute -bottom-10 -left-10 w-[40%] h-[60%] rounded-full blur-[80px]"
+          style={{ background: "radial-gradient(circle, rgba(175,218,239,0.95) 0%, transparent 70%)" }} />
+        <div className="absolute -bottom-10 -right-10 w-[40%] h-[60%] rounded-full blur-[80px]"
+          style={{ background: "radial-gradient(circle, rgba(185,222,245,0.95) 0%, transparent 70%)" }} />
+
+        {/* Animated orbs — sped up to match gradient (4-6s) */}
+        <motion.div
+          className="absolute top-[10%] left-[10%] w-[60%] h-[60%] rounded-full blur-[80px]"
+          style={{ background: "radial-gradient(circle, rgba(99,179,255,0.9) 0%, rgba(148,210,255,0.5) 40%, transparent 70%)" }}
+          animate={{ x: [0, 160, -80, 60, 0], y: [0, -80, 60, -40, 0] }}
+          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="absolute top-[20%] right-[5%] w-[55%] h-[55%] rounded-full blur-[90px]"
+          style={{ background: "radial-gradient(circle, rgba(180,140,255,0.85) 0%, rgba(210,190,255,0.45) 40%, transparent 70%)" }}
+          animate={{ x: [0, -120, 60, -40, 0], y: [0, 80, -60, 40, 0] }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="absolute bottom-[5%] left-[20%] w-[60%] h-[60%] rounded-full blur-[100px]"
+          style={{ background: "radial-gradient(circle, rgba(56,195,255,0.85) 0%, rgba(100,220,255,0.4) 40%, transparent 70%)" }}
+          animate={{ x: [0, 100, -60, 0], y: [0, -60, 40, 0] }}
+          transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="absolute top-[40%] left-[35%] w-[50%] h-[50%] rounded-full blur-[110px] -translate-x-1/2 -translate-y-1/2"
+          style={{ background: "radial-gradient(circle, rgba(200,180,255,0.7) 0%, rgba(220,210,255,0.3) 50%, transparent 70%)" }}
+          animate={{ scale: [1, 1.25, 0.85, 1.1, 1], opacity: [0.7, 1, 0.6, 0.9, 0.7] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
         />
       </div>
 
-      {/* Glow effect following cursor */}
-      <div
-        className="absolute w-96 h-96 rounded-full blur-3xl opacity-0 pointer-events-none transition-opacity duration-300"
-        style={{
-          background: 'radial-gradient(circle, rgba(0, 255, 200, 0.2) 0%, transparent 70%)',
-          left: cursorPos.x - 192,
-          top: cursorPos.y - 192,
-          opacity: isHovering ? 0.6 : 0.2,
-        }}
-      />
-
-      {/* Content */}
-      <div className="relative z-20 w-full h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
-        {/* Animated corner decorations */}
-        <div className="absolute top-8 left-8 w-16 h-16 border-t-2 border-l-2 border-cyan-400 animate-pulse opacity-60" />
-        <div className="absolute bottom-8 right-8 w-16 h-16 border-b-2 border-r-2 border-cyan-400 animate-pulse opacity-60" style={{ animationDelay: '0.5s' }} />
-        <div className="absolute top-8 right-8 w-16 h-16 border-t-2 border-r-2 border-pink-500 animate-pulse opacity-40" style={{ animationDelay: '0.25s' }} />
-        <div className="absolute bottom-8 left-8 w-16 h-16 border-b-2 border-l-2 border-pink-500 animate-pulse opacity-40" style={{ animationDelay: '0.75s' }} />
-
-        <div className="max-w-5xl mx-auto text-center space-y-10">
-          {/* Top label with glitch effect */}
-          <div className="inline-block relative group mb-8">
-            <div className="text-xs sm:text-sm tracking-widest uppercase font-mono text-cyan-400 opacity-80">
-              ▪ System Online ▪
-            </div>
-            <div className="absolute -inset-2 bg-gradient-to-r from-cyan-500/0 via-cyan-500/20 to-cyan-500/0 blur-lg group-hover:from-cyan-500/20 group-hover:via-cyan-500/50 group-hover:to-cyan-500/20 transition-all duration-500" />
-          </div>
-
-          {/* Main heading with glitch layers */}
-          <div className="relative h-40 sm:h-48 lg:h-56 flex items-center justify-center">
-            <h1
-              className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-pink-400 to-cyan-300 leading-none"
-              style={{
-                textShadow: '0 0 30px rgba(0, 255, 200, 0.5)',
-                animation: 'flicker 4s infinite',
-              }}
-            >
-              THE FUTURE
-              <br />
-              IS LOADING
-            </h1>
-
-            {/* Glitch effect elements */}
-            <div
-              className="absolute inset-0 text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black tracking-wider opacity-80 pointer-events-none"
-              style={{
-                backgroundClip: 'text',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundImage: 'linear-gradient(90deg, #ff00ff, #00ffff)',
-                animation: 'glitch1 2s infinite',
-                clipPath: 'polygon(0 0, 100% 0, 100% 35%, 0 35%)',
-              }}
-            >
-              THE FUTURE
-              <br />
-              IS LOADING
-            </div>
-
-            <div
-              className="absolute inset-0 text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black tracking-wider opacity-60 pointer-events-none"
-              style={{
-                backgroundClip: 'text',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundImage: 'linear-gradient(90deg, #00ffff, #ff00ff)',
-                animation: 'glitch2 2s infinite',
-                clipPath: 'polygon(0 65%, 100% 65%, 100% 100%, 0 100%)',
-              }}
-            >
-              THE FUTURE
-              <br />
-              IS LOADING
-            </div>
-          </div>
-
-          {/* Subheading with scanline effect */}
-          <div
-            className="text-base sm:text-lg text-gray-300 font-light tracking-wide max-w-3xl mx-auto relative"
+      {/* Main content */}
+      <motion.div
+        className="relative z-10 flex flex-col items-center text-center px-6 w-full mx-auto"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+  
+        {/* Headline */}
+        <motion.h1
+          variants={fadeUp}
+          className="text-4xl md:text-5xl font-semibold leading-[1.1] tracking-tight mb-4"
+          style={{ color: "#1a2f4a" }}
+        >
+          Our team is working hard to make the{" "}<br />
+          <span
             style={{
-              animation: 'scanlines 8s linear infinite',
+              backgroundImage: "linear-gradient(to right, #1193d2, #3e236a)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
             }}
           >
-            <p className="mb-2">
-              We&apos;re building something revolutionary. Something that will
-            </p>
-            <p>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-cyan-400 font-semibold">
-                redefine the industry
-              </span>
-              . Watch this space.
-            </p>
-          </div>
+            world a better place.
+          </span>
+        </motion.h1>
 
-          {/* Status bar */}
-          <div className="flex items-center justify-center gap-4 text-xs font-mono text-cyan-400 opacity-60 mt-8">
-            <div className="w-2 h-2 bg-cyan-400 animate-pulse rounded-full" />
-            <span>[ INITIALIZING LAUNCH SEQUENCE ]</span>
-            <div className="w-2 h-2 bg-pink-500 animate-pulse rounded-full" style={{ animationDelay: '0.5s' }} />
-          </div>
 
-          {/* Loading bar */}
-          <div className="relative w-48 sm:w-64 h-1 bg-gray-800 border border-cyan-400/50 rounded-full overflow-hidden mx-auto mt-6">
-            <div
-              className="h-full bg-gradient-to-r from-cyan-400 via-pink-500 to-cyan-400 rounded-full"
-              style={{
-                width: '65%',
-                boxShadow: '0 0 20px rgba(0, 255, 200, 0.8)',
-                animation: 'loading 3s ease-in-out infinite',
-              }}
-            />
-          </div>
+        {/* Join our journey */}
+        <motion.p
+          variants={fadeUp}
+          className="text-lg font-semibold mb-5"
+          style={{ color: "#1a2f4a" }}
+        >
+          Join our journey
+        </motion.p>
 
-          {/* Careers Button with neon glow */}
-          <div className="mt-12 relative group" onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}>
-            {/* Glow background */}
-            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-pink-500 blur-lg opacity-0 group-hover:opacity-75 transition-opacity duration-500 rounded-lg" />
-
-            <button
-              className="relative px-8 sm:px-10 py-4 text-sm sm:text-base font-mono tracking-widest uppercase border-2 border-cyan-400 bg-black/80 backdrop-blur-sm text-cyan-400 group-hover:text-black group-hover:bg-cyan-400 transition-all duration-500 overflow-hidden rounded-lg"
-              onClick={() => {
-                window.location.href = '/careers';
-              }}
-            >
-              {/* Animated border */}
-              <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/50 via-pink-500/50 to-cyan-500/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-              {/* Button text */}
-              <span className="relative flex items-center justify-center gap-3">
-                → EXPLORE CAREERS ←
-              </span>
-
-              {/* Shine effect */}
-              <div className="absolute inset-0 overflow-hidden rounded-lg">
-                <div
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                  style={{
-                    animation: 'shine 0.6s ease-in-out forwards',
-                  }}
-                />
-              </div>
-            </button>
-          </div>
-
-          {/* Additional info text */}
-          <div className="text-xs sm:text-sm text-gray-500 font-mono tracking-wider mt-8 opacity-60">
-            <p> Preparing for launch in Q2 2024</p>
-            <p> Stay tuned for updates</p>
-          </div>
-        </div>
-
-        {/* Vertical scanner lines effect */}
-        <div
-          className="absolute inset-0 pointer-events-none opacity-5"
+        {/* CTA Button */}
+        <motion.a
+          variants={fadeUp}
+          href="/careers"
+          className="inline-flex items-center gap-2.5 px-8 py-3 rounded-full text-white text-[15px] font-semibold no-underline mb-8"
           style={{
-            backgroundImage: `repeating-linear-gradient(
-              0deg,
-              transparent,
-              transparent 2px,
-              rgba(255, 255, 255, 0.5) 2px,
-              rgba(255, 255, 255, 0.5) 4px
-            )`,
-            animation: 'scan 8s linear infinite',
+            background: "linear-gradient(to right, #1193d2, #3e236a)",
+            boxShadow: "0 8px 30px rgba(17,147,210,0.35)",
           }}
-        />
-      </div>
+          whileHover={{ opacity: 0.88, y: -2 }}
+          whileTap={{ scale: 0.97 }}
+          transition={{ type: "spring", stiffness: 300, damping: 20 }}
+        >
+          Explore careers
+          <span
+            className="w-5 h-5 rounded-full flex items-center justify-center text-xs"
+            style={{ background: "rgba(255,255,255,0.22)" }}
+          >
+            ↗
+          </span>
+        </motion.a>
 
-      {/* CSS Animations */}
-      <style>{`
-        @keyframes flicker {
-          0%, 100% {
-            text-shadow: 0 0 30px rgba(0, 255, 200, 0.5);
-          }
-          50% {
-            text-shadow: 0 0 50px rgba(0, 255, 200, 0.8), 0 0 80px rgba(255, 0, 200, 0.4);
-          }
-        }
+      </motion.div>
 
-        @keyframes glitch1 {
-          0% {
-            clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
-            transform: translateX(0);
-          }
-          20% {
-            clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
-            transform: translateX(-4px);
-          }
-          40% {
-            clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
-            transform: translateX(4px);
-          }
-          60% {
-            clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
-            transform: translateX(-2px);
-          }
-          80% {
-            clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
-            transform: translateX(2px);
-          }
-          100% {
-            clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
-            transform: translateX(0);
-          }
-        }
-
-        @keyframes glitch2 {
-          0% {
-            clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
-            transform: translateX(0);
-          }
-          20% {
-            clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
-            transform: translateX(4px);
-          }
-          40% {
-            clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
-            transform: translateX(-4px);
-          }
-          60% {
-            clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
-            transform: translateX(2px);
-          }
-          80% {
-            clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
-            transform: translateX(-2px);
-          }
-          100% {
-            clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
-            transform: translateX(0);
-          }
-        }
-
-        @keyframes scanlines {
-          0%, 100% {
-            text-shadow: 0 0 10px rgba(0, 255, 200, 0.3);
-          }
-          50% {
-            text-shadow: 0 0 20px rgba(0, 255, 200, 0.6), 0 2px 10px rgba(255, 0, 150, 0.3);
-          }
-        }
-
-        @keyframes loading {
-          0%, 100% {
-            width: 0;
-          }
-          50% {
-            width: 100%;
-          }
-        }
-
-        @keyframes gridSlide {
-          0% {
-            transform: translateY(0);
-          }
-          100% {
-            transform: translateY(100px);
-          }
-        }
-
-        @keyframes scan {
-          0% {
-            transform: translateY(0);
-          }
-          100% {
-            transform: translateY(10px);
-          }
-        }
-
-        @keyframes shine {
-          0% {
-            transform: translateX(-100%);
-          }
-          100% {
-            transform: translateX(100%);
-          }
-        }
-
-        * {
-          user-select: none;
-        }
-
-        html {
-          scroll-behavior: smooth;
-        }
-
-        /* Custom cursor effect */
-        body {
-          cursor: crosshair;
-        }
-
-        button {
-          cursor: pointer;
-        }
-
-        /* Text rendering for crisp look */
-        h1 {
-          -webkit-font-smoothing: antialiased;
-          -moz-osx-font-smoothing: grayscale;
-        }
-      `}</style>
-    </div>
+      {/* Bottom fade */}
+      <div
+        className="absolute bottom-0 left-0 w-full h-64 z-10 pointer-events-none"
+        style={{ background: "linear-gradient(to top, rgba(175,218,239,0.88) 0%, rgba(175,218,239,0.5) 40%, transparent 100%)" }}
+      />
+    </motion.section>
   );
-}
+};
+
+export default MissionHero;
